@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 import io from 'socket.io-client'
-const ENDPOINT = 'http://127.0.0.1:3000'
 
 export default function Home() {
   const [Color, setColor] = useState('#F6F6F5')
