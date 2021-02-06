@@ -72,7 +72,8 @@ export default function Presenter() {
                 : 'Spelvyn är inte ansluten än'}
             </p>
           </div>
-          <div tw="flex items-center mt-6">
+          <hr tw="w-2/4 border-gray-300 my-6" />
+          <div tw="flex items-center mt-3 mb-6">
             {Connected.client && Connected.presenter ? (
               <ConnectionHint connectionType="connected" variant="large" />
             ) : (
