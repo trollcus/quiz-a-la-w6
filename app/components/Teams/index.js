@@ -31,11 +31,9 @@ const Teams = () => {
     },
     addTeam = () => setTeams([...Teams, { name: '', points: 0, members: [] }]),
     addMember = idx => {
-      console.log(idx)
       const teams = Teams
-      teams[idx].members = [...teams[idx].members, 'asd']
-      console.log(teams[idx].members)
-      setTeams(teams)
+      teams[idx].members = [...teams[idx].members, '']
+      setTeams([...teams])
     }
 
   useEffect(() => {
@@ -67,7 +65,7 @@ const Teams = () => {
           </h1>
           <h3 tw="mt-2 font-bold">Utmanarna: </h3>
           {members.map((member, memberIdx) => (
-            <div key={`member-${memberIdx}`}>
+            <div key={`${idx}-member-${memberIdx}`}>
               <AutosizeInput
                 name="member"
                 id={`${idx}-id-${memberIdx}`}
