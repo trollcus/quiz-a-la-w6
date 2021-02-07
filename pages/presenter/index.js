@@ -9,7 +9,7 @@ const styleMap = {
   connected: tw`w-4 h-4 mr-4 rounded-full bg-green-400`,
   disconnected: tw`w-4 h-4 mr-4 rounded-full bg-red-400`,
   connected_large: tw`w-6 h-6 mr-4 rounded-full bg-green-400`,
-  disconnected_large: tw`w-6 h-6 mr-4 rounded-full bg-red-400`,
+  disconnected_large: tw`w-6 h-6 mr-4 rounded-full bg-red-400 animate-pulse`,
 }
 
 const getStyleName = ({ connectionType, variant }) =>
@@ -18,6 +18,8 @@ const getStyleName = ({ connectionType, variant }) =>
 
 const ConnectionHint = styled.div(getStyleName)
 
+const socket = io({ extraHeaders: { presenter: true } })
+
 export default function Presenter() {
   const [Connected, setConnected] = useState({
     presenter: false,
@@ -25,14 +27,10 @@ export default function Presenter() {
   })
 
   const handleClick = () => {
-    const socket = io()
-    socket.emit('clickFunction', '#0058AC')
+    socket.emit('startGameMsg', true)
   }
 
   useEffect(() => {
-    const socket = io({ extraHeaders: { presenter: true } })
-    socket.emit('presenterConnected', true)
-
     socket.on('connectionInfo', ({ connectionInfo }) =>
       setConnected({ ...connectionInfo })
     )
@@ -89,7 +87,7 @@ export default function Presenter() {
             tw="bg-blue-600 py-2 px-4 rounded text-white my-4"
             onClick={handleClick}
           >
-            Change color here
+            Starta spelet
           </button>
         </div>
 

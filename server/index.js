@@ -31,9 +31,9 @@ nextApp
       if (socket.handshake.headers.client) connectionInfo.client = true
       io.emit('connectionInfo', { connectionInfo })
 
-      socket.on('clickFunction', msg => {
-        io.emit('newColor', { color: msg })
-      })
+      socket.on('startGameMsg', status => io.emit('startGame', status))
+
+      socket.on('teamMsg', teams => io.emit('teams', teams))
 
       //Whenever someone disconnects this piece of code executed
       socket.on('disconnect', () => {
