@@ -13,6 +13,47 @@ const quiz = {
           media: [],
           answer: 'Amber Heard - Rum Diary.',
         },
+        {
+          title:
+            'Vilket ord, som från början var Winona, står tatuerat på Johnnys ena arm och vad betyder ordet?',
+          media: [],
+          answer: 'Wino - Vinmissbrukare.',
+        },
+        {
+          title:
+            'Finns alla tre vinsorterna eller är en fake? Barolo, Barliti och Barbera.',
+          media: [],
+          answer: 'Ett av dem är fake.',
+        },
+      ],
+    },
+    {
+      title: 'Faa-an va mycket gött som börjar på “AL”?',
+      presenterText: '',
+      questions: [
+        {
+          title:
+            'Al Capone (stad):Al Turner (stad):Al Forno (land):Al Jazeera (land):Al Icia Vikander (stad):Al Ladin (land):Al Kohol (land):',
+          media: [],
+          answer: 'Al Capone (stad) - New York',
+        },
+      ],
+    },
+    {
+      title: 'Boon Jon Bon Hovi',
+      presenterText: '',
+      questions: [
+        {
+          title: 'Vilket ord är borttaget från Bong Joon-hos tal?',
+          media: [],
+          answer: 'DRINK',
+        },
+        {
+          title:
+            'Vilka ord är borttagna från Adams “tal”? Först ett, sedan två.',
+          media: [],
+          answer: 'LORENTZ - DIE ALONE',
+        },
       ],
     },
   ],

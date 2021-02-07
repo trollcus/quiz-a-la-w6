@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import io from 'socket.io-client'
 import tw, { styled, css } from 'twin.macro'
+import useSWR from 'swr'
 
 import Teams from '@/components/Teams'
 
@@ -22,13 +23,77 @@ const socket = io({ extraHeaders: { presenter: true } })
 
 export default function Presenter() {
   const [Connected, setConnected] = useState({
-    presenter: false,
-    client: false,
-  })
+      presenter: false,
+      client: false,
+    }),
+    [Quiz, setQuiz] = useState(null),
+    { data, error } = useSWR('/getQuiz', () =>
+      fetch('/getQuiz').then(response => response.json())
+    ),
+    startGame = () => {
+      socket.emit('startGameMsg', true)
+    }
 
-  const handleClick = () => {
-    socket.emit('startGameMsg', true)
-  }
+  useEffect(() => {
+    if (data) {
+      const formatData = {
+        categories: data.categories.reduce((categories, current) => {
+          return [
+            ...categories,
+            {
+              presenterText: current.presenterText,
+              title: current.title,
+              questions: [
+                Object.keys(current)
+                  .filter(key => key.includes('question'))
+                  .map(q => {
+                    const newQ = q.split('_')
+
+                    return {
+                      id: `question_${newQ[1]}`,
+                      question: current[`question_${newQ[1]}_title`],
+                      answer: current[`question_${newQ[1]}_answer`],
+                      media: current[`question_${newQ[1]}_media`],
+                    }
+                  })
+                  .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i),
+              ],
+            },
+          ]
+        }, []),
+        activities: data.activities.reduce((categories, current) => {
+          return [
+            ...categories,
+            {
+              presenterText: current.presenterText,
+              title: current.title,
+              questions: [
+                Object.keys(current)
+                  .filter(key => key.includes('question'))
+                  .map(q => {
+                    const newQ = q.split('_')
+
+                    return {
+                      id: `question_${newQ[1]}`,
+                      question: current[`question_${newQ[1]}_title`],
+                      answer: current[`question_${newQ[1]}_answer`],
+                      media: current[`question_${newQ[1]}_media`],
+                    }
+                  })
+                  .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i),
+              ],
+            },
+          ]
+        }, []),
+      }
+
+      setQuiz(formatData)
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (Quiz) socket.emit('quizDataMsg', Quiz)
+  }, [Quiz])
 
   useEffect(() => {
     socket.on('connectionInfo', ({ connectionInfo }) =>
@@ -85,7 +150,7 @@ export default function Presenter() {
           </div>
           <button
             tw="bg-blue-600 py-2 px-4 rounded text-white my-4"
-            onClick={handleClick}
+            onClick={startGame}
           >
             Starta spelet
           </button>
