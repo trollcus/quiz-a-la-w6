@@ -38,7 +38,7 @@ nextApp
       if (socket.handshake.headers.client) connectionInfo.client = true
       io.emit('connectionInfo', { connectionInfo })
 
-      socket.on('startGameMsg', status => io.emit('startGame', status))
+      socket.on('gameStateMsg', state => io.emit('gameState', state))
 
       socket.on('teamMsg', teams => io.emit('teams', teams))
 
@@ -100,6 +100,16 @@ nextApp
               M: 'question_4_title',
               N: 'question_4_media',
               O: 'question_4_answer',
+            },
+          },
+          {
+            name: 'meta',
+            header: {
+              rows: 1,
+            },
+            columnToKey: {
+              A: 'name',
+              B: 'image',
             },
           },
         ],

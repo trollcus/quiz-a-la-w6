@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import io from 'socket.io-client'
 import tw, { styled, css } from 'twin.macro'
-import useSWR from 'swr'
+
+import useGetQuiz from '@/hooks/useGetQuiz'
 
 import Teams from '@/components/Teams'
 
 const styleMap = {
-  connected: tw`w-4 h-4 mr-4 rounded-full bg-green-400`,
-  disconnected: tw`w-4 h-4 mr-4 rounded-full bg-red-400`,
-  connected_large: tw`w-6 h-6 mr-4 rounded-full bg-green-400`,
-  disconnected_large: tw`w-6 h-6 mr-4 rounded-full bg-red-400 animate-pulse`,
+  connected: tw`w-4 h-4 mr-4 bg-green-400 rounded-full`,
+  disconnected: tw`w-4 h-4 mr-4 bg-red-400 rounded-full`,
+  connected_large: tw`w-6 h-6 mr-4 bg-green-400 rounded-full`,
+  disconnected_large: tw`w-6 h-6 mr-4 bg-red-400 rounded-full animate-pulse`,
 }
 
 const getStyleName = ({ connectionType, variant }) =>
@@ -27,69 +28,20 @@ export default function Presenter() {
       client: false,
     }),
     [Quiz, setQuiz] = useState(null),
-    { data, error } = useSWR('/getQuiz', () =>
-      fetch('/getQuiz').then(response => response.json())
-    ),
+    [GameState, setGameState] = useState({ view: 'waiting', data: null }),
+    { quiz, error } = useGetQuiz(),
     startGame = () => {
-      socket.emit('startGameMsg', true)
+      setGameState({ view: 'categories', data: null })
+    },
+    syncGame = () => {
+      socket.emit('quizDataMsg', Quiz)
+      socket.emit('gameStateMsg', GameState)
     }
 
+  // If we recieve quiz data from server
   useEffect(() => {
-    if (data) {
-      const formatData = {
-        categories: data.categories.reduce((categories, current) => {
-          return [
-            ...categories,
-            {
-              presenterText: current.presenterText,
-              title: current.title,
-              questions: [
-                Object.keys(current)
-                  .filter(key => key.includes('question'))
-                  .map(q => {
-                    const newQ = q.split('_')
-
-                    return {
-                      id: `question_${newQ[1]}`,
-                      question: current[`question_${newQ[1]}_title`],
-                      answer: current[`question_${newQ[1]}_answer`],
-                      media: current[`question_${newQ[1]}_media`],
-                    }
-                  })
-                  .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i),
-              ],
-            },
-          ]
-        }, []),
-        activities: data.activities.reduce((categories, current) => {
-          return [
-            ...categories,
-            {
-              presenterText: current.presenterText,
-              title: current.title,
-              questions: [
-                Object.keys(current)
-                  .filter(key => key.includes('question'))
-                  .map(q => {
-                    const newQ = q.split('_')
-
-                    return {
-                      id: `question_${newQ[1]}`,
-                      question: current[`question_${newQ[1]}_title`],
-                      answer: current[`question_${newQ[1]}_answer`],
-                      media: current[`question_${newQ[1]}_media`],
-                    }
-                  })
-                  .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i),
-              ],
-            },
-          ]
-        }, []),
-      }
-
-      setQuiz(formatData)
-    }
-  }, [data])
+    if (quiz) setQuiz(quiz)
+  }, [quiz])
 
   useEffect(() => {
     if (Quiz) socket.emit('quizDataMsg', Quiz)
@@ -101,6 +53,10 @@ export default function Presenter() {
     )
   }, [])
 
+  useEffect(() => {
+    socket.emit('gameStateMsg', GameState)
+  }, [GameState])
+
   return (
     <>
       <div>
@@ -109,7 +65,7 @@ export default function Presenter() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
       </div>
-      <div tw="grid grid-cols-3 m-12">
+      <div tw="grid grid-cols-3 m-12 gap-12">
         <div tw="col-span-1">
           <div tw="flex items-center mb-3">
             {Connected.presenter ? (
@@ -154,11 +110,28 @@ export default function Presenter() {
           >
             Starta spelet
           </button>
+          <button
+            tw="bg-blue-600 py-2 px-4 rounded text-white my-4"
+            onClick={syncGame}
+          >
+            Synka spelet
+          </button>
+          <h1>Lagen: </h1>
+          <Teams />
         </div>
 
         <div tw="col-span-1">
-          <h1>Lagen: </h1>
-          <Teams />
+          {Quiz?.categories.map(category => (
+            <div
+              tw="p-2 my-4 bg-gray-200 rounded cursor-pointer"
+              key={category.title}
+              onClick={() =>
+                setGameState({ view: 'categories', data: category })
+              }
+            >
+              {category.title}
+            </div>
+          ))}
         </div>
       </div>
     </>

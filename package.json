@@ -17,6 +17,7 @@
     "chalk": "^4.1.0",
     "convert-excel-to-json": "^1.7.0",
     "express": "^4.17.1",
+    "framer-motion": "^3.3.0",
     "fs": "^0.0.1-security",
     "next": "10.0.6",
     "node-args": "^2.1.8",
