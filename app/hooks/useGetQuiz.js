@@ -55,6 +55,16 @@ const useGetQuiz = () => {
           ]
         }, []),
         name: data.meta[0].name,
+        teams: data.teams.reduce((teams, current) => {
+          const { A, ...rest } = current
+          return [
+            ...teams,
+            {
+              name: current.A,
+              members: Object.values(rest),
+            },
+          ]
+        }, []),
       }
 
       setQuiz(formatData)

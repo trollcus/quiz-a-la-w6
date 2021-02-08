@@ -1,44 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import tw, { styled, css } from 'twin.macro'
 import AutosizeInput from 'react-input-autosize'
-import io from 'socket.io-client'
 
-const socket = io()
-
-const Teams = () => {
-  const [Teams, setTeams] = useState([
-      {
-        name: 'Lad5',
-        points: 0,
-        members: ['Ternekaise', 'w6', 'mäk', 'gSOn', 'chris P'],
-      },
-      {
-        name: 'asd',
-        points: 0,
-        members: ['dd', 'bourbon', 'whiskey', 'sake', 'bärs'],
-      },
-    ]),
-    handleChange = ({ value, id, field, idx }) => {
-      console.log('here')
+const Teams = ({ teams: Teams, handleTeams }) => {
+  const handleChange = ({ value, id, idx }) => {
       const teams = [...Teams]
       teams[idx][id] = value
-      setTeams(teams)
+      handleTeams(teams)
     },
     handleMember = ({ value, teamsIndex, memberIdx }) => {
       const teams = [...Teams]
       teams[teamsIndex].members[memberIdx] = value
-      setTeams(teams)
+      handleTeams(teams)
     },
-    addTeam = () => setTeams([...Teams, { name: '', points: 0, members: [] }]),
+    addTeam = () =>
+      handleTeams([...Teams, { name: '', points: 0, members: [] }]),
     addMember = idx => {
       const teams = Teams
       teams[idx].members = [...teams[idx].members, '']
-      setTeams([...teams])
+      handleTeams([...teams])
     }
-
-  useEffect(() => {
-    socket.emit('teamMsg', Teams)
-  }, [Teams])
 
   return (
     <>
@@ -60,6 +41,24 @@ const Teams = () => {
               }}
               onChange={({ target: { value } }) =>
                 handleChange({ value, id: 'name', idx })
+              }
+            />
+          </h1>
+          <h1 tw="font-bold text-base">
+            Poäng:
+            <AutosizeInput
+              name="name"
+              id={`${idx}-name`}
+              value={points}
+              placeholder="Poäng"
+              inputStyle={{
+                fontSize: 18,
+                backgroundColor: '#E5E7EB',
+                padding: '0.4em 0em',
+                marginLeft: '0.4em',
+              }}
+              onChange={({ target: { value } }) =>
+                handleChange({ value, id: 'points', idx })
               }
             />
           </h1>

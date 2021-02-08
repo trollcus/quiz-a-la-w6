@@ -112,6 +112,12 @@ nextApp
               B: 'image',
             },
           },
+          {
+            name: 'teams',
+            header: {
+              rows: 1,
+            },
+          },
         ],
       })
 

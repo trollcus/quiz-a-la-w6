@@ -28,6 +28,7 @@ export default function Presenter() {
       client: false,
     }),
     [Quiz, setQuiz] = useState(null),
+    [QuizTeams, setTeams] = useState([]),
     [GameState, setGameState] = useState({ view: 'waiting', data: null }),
     { quiz, error } = useGetQuiz(),
     startGame = () => {
@@ -36,11 +37,18 @@ export default function Presenter() {
     syncGame = () => {
       socket.emit('quizDataMsg', Quiz)
       socket.emit('gameStateMsg', GameState)
+      socket.emit('teamMsg', QuizTeams)
     }
 
-  // If we recieve quiz data from server
   useEffect(() => {
-    if (quiz) setQuiz(quiz)
+    // If we recieve quiz data from server
+    if (quiz) {
+      const { teams, ...rest } = quiz
+      setQuiz(rest)
+
+      // Load teams from XLSX
+      if (teams) setTeams(teams.map(team => ({ ...team, points: 0 })))
+    }
   }, [quiz])
 
   useEffect(() => {
@@ -48,14 +56,18 @@ export default function Presenter() {
   }, [Quiz])
 
   useEffect(() => {
-    socket.on('connectionInfo', ({ connectionInfo }) =>
-      setConnected({ ...connectionInfo })
-    )
-  }, [])
+    socket.emit('teamMsg', QuizTeams)
+  }, [QuizTeams])
 
   useEffect(() => {
     socket.emit('gameStateMsg', GameState)
   }, [GameState])
+
+  useEffect(() => {
+    socket.on('connectionInfo', ({ connectionInfo }) =>
+      setConnected({ ...connectionInfo })
+    )
+  }, [])
 
   return (
     <>
@@ -117,7 +129,7 @@ export default function Presenter() {
             Synka spelet
           </button>
           <h1>Lagen: </h1>
-          <Teams />
+          <Teams teams={QuizTeams} handleTeams={data => setTeams(data)} />
         </div>
 
         <div tw="col-span-1">
