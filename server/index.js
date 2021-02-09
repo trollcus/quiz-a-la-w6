@@ -138,9 +138,6 @@ ${divider}
 ${chalk.bgBlue.black(' URL -> ')} Localhost: ${chalk.magenta(
         `http://${host}:${port}`
       )}
-${chalk.bgWhite.black(' API -> ')} ${chalk.cyan(
-        `${process.env.NEXT_PUBLIC_API_URL}`
-      )}
 ${chalk.bgGray.black(' To stop -> ')} ${chalk.gray(
         `Press ${chalk.italic('CTRL-C')} to stop`
       )}

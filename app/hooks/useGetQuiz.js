@@ -26,6 +26,7 @@ const useGetQuiz = () => {
                     question: current[`question_${newQ[1]}_title`],
                     answer: current[`question_${newQ[1]}_answer`],
                     media: current[`question_${newQ[1]}_media`],
+                    revealed: false,
                   }
                 })
                 .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i),

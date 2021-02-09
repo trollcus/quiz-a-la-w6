@@ -13,9 +13,13 @@ const Categories = ({ categories, category }) => {
         <div tw="w-full h-full flex flex-col items-start justify-center p-24">
           <h1 tw="text-3xl mb-8 font-bold">{category.title}</h1>
           {category.questions.map(q => (
-            <p key={q.id} tw="text-2xl mb-8">
-              {q.question}
-            </p>
+            <>
+              {q.revealed && (
+                <p key={q.id} tw="text-2xl mb-8">
+                  {q.question}
+                </p>
+              )}
+            </>
           ))}
         </div>
       ) : (

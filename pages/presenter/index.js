@@ -38,6 +38,14 @@ export default function Presenter() {
       socket.emit('quizDataMsg', Quiz)
       socket.emit('gameStateMsg', GameState)
       socket.emit('teamMsg', QuizTeams)
+    },
+    revealQuestion = ({ idx, field }) => {
+      if (GameState.data) {
+        const items = [...GameState.data[field]]
+
+        items[idx].revealed = !items[idx].revealed
+        setGameState(state => ({ ...state, [field]: [...items] }))
+      }
     }
 
   useEffect(() => {
@@ -142,6 +150,19 @@ export default function Presenter() {
               }
             >
               {category.title}
+            </div>
+          ))}
+        </div>
+        <div tw="col-span-1">
+          {GameState?.data?.questions?.map((q, idx) => (
+            <div
+              tw="p-2 my-4 bg-gray-200 rounded cursor-pointer"
+              key={q.id}
+              onClick={() =>
+                revealQuestion({ field: 'questions', item: q, idx })
+              }
+            >
+              {q.question}
             </div>
           ))}
         </div>
